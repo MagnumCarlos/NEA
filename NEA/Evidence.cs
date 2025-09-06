@@ -1,4 +1,6 @@
-﻿namespace NEA
+﻿using System.Collections.Generic;
+
+namespace NEA
 {
     public interface IRectangle
     {
@@ -32,17 +34,29 @@
             DetectionType = DETECTIONTYPE;
             DetectionCoords = new List<(int,int)>();
         }
+        public string GetName()
+        {
+            return Name;
+        }
         public void Spawn(Room room)
         {
+            List<(int, int)> Coords = new List<(int, int)>();
             switch (SpawnType)
             {
                 case SpawnPattern.Point:
                     
                     break;
-                /*case SpawnPattern.MultiPoint:
-                    
+                case SpawnPattern.MultiPoint:
+                    if(Name == "Ghost Orbs")
+                    {
+                        Coords = MultiPointSpawn(room, 5);
+                    }
+                    else if(Name == "Fingerprints")
+                    {
+                        Coords = MultiPointSpawn(room.GetProps(),5);    
+                    }
                     break;
-                case SpawnPattern.Area:
+                /*case SpawnPattern.Area:
                     
                     break;
                 case SpawnPattern.Dynamic:
@@ -50,7 +64,7 @@
                     break;*/
             }
         }
-        public List<Evidence> GetEvidences()
+        private static List<Evidence> GetEvidences()
         {
             return new List<Evidence>
             {
@@ -63,7 +77,13 @@
                 //new Evidence("Motion Sensor", SpawnPattern.Point, DetectionMethod.Instrumental)
             };
         }
-        public List<(int, int)> RectangleSpawn(IRectangle Rect, int DetectionModifier = 0)
+        public static List<Evidence> SelectEvidences(List<string> TargetNames)
+        {
+            return GetEvidences().Where(e => TargetNames.Contains(e.GetName())).ToList();
+            //REALLY shorthand version. It gets all the evidences, and for each evidence (e), if its name matches something in TargetName,
+            //the evidence is added to a list to be returned.
+        }
+        private List<(int, int)> RectangleSpawn(IRectangle Rect, int DetectionModifier = 0)
         {
             int StartX = Rect.GetOriginX() - DetectionModifier;
             int StartY = Rect.GetOriginY() - DetectionModifier;
@@ -78,7 +98,7 @@
             }
             return Coords;
         }
-        public List<(int, int)> MultiPointSpawn(Room room, int Frequency) 
+        private List<(int, int)> MultiPointSpawn(Room room, int Frequency) 
         {
             Random rng = new Random();
             Cell[,] Cells = room.GetCells();
@@ -96,7 +116,7 @@
             }
             return SpawnCoords;
         }
-        public List<(int, int)> MultiPointSpawn(List<Prop>Props, int PrintsPerProp) //fingerprints
+        private List<(int, int)> MultiPointSpawn(List<Prop>Props, int PrintsPerProp) //fingerprints
         {
             Random rng = new Random();
             List<(int, int)> SpawnCoords = new List<(int, int)>();

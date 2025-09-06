@@ -12,6 +12,14 @@
             this.Name = NAME;
             this.Evidences = EVIDENCES;
         }
+        public int GetGXCoord()
+        {
+            return GXCoord;
+        }
+        public int GetGYCoord()
+        {
+            return GYCoord;
+        }
         public static Ghost LoadGhost(string FileName, Room GhostRoom)
         {
             if (Program.CheckForFile(FileName))
@@ -20,40 +28,42 @@
                 Random rng = new Random();
                 int Random = rng.Next(Lines.Length);
                 string line = Lines[Random];
-
                 string[] Parts = line.Split();
                 string GhostType = Parts[0];
-                List<Evidence> Evidences = new List<Evidence>();
-            
+                List<Evidence> Evidences = Evidence.SelectEvidences(new List<string> { Parts[1], Parts[2] });
                 (int SpawnX, int SpawnY) = SpawnGhost(GhostRoom);
                 return new Ghost(SpawnX, SpawnY, GhostType, Evidences);
             }
             Console.WriteLine("error occurred during ghost loading");
             return null;
         }
-        public static (int,int) SpawnGhost(Room GhostRoom)
+        private static (int, int) SpawnGhost(Room GhostRoom)
         {
-            int SpawnX = (GhostRoom.GetWidth() / 2) + GhostRoom.GetOriginX();
-            int SpawnY = (GhostRoom.GetHeight() / 2) + GhostRoom.GetOriginY();
+            int localX = 1;
+            int localY = 1;
+
             Cell[,] cells = GhostRoom.GetCells();
-            if (cells[SpawnX,SpawnY].IsWalkable())
+
+            if (cells[localX, localY].IsWalkable())
             {
-                return (SpawnX, SpawnY);
+                return (localX + GhostRoom.GetOriginX(), localY + GhostRoom.GetOriginY());
             }
             else
             {
-                for(int i =0; i < GhostRoom.GetWidth();i++)
+                for (int i = 0; i < GhostRoom.GetWidth(); i++)
                 {
-                    for(int j =0; j < GhostRoom.GetHeight(); j++)
+                    for (int j = 0; j < GhostRoom.GetHeight(); j++)
                     {
-                        if(cells[i,j].IsWalkable())
+                        if (cells[i, j].IsWalkable())
                         {
-                            return(i + GhostRoom.GetOriginX(), j + GhostRoom.GetOriginY());
+                            return (i + GhostRoom.GetOriginX(), j + GhostRoom.GetOriginY());
                         }
                     }
                 }
             }
-            return (-1, -1); 
+
+            return (-1, -1);
         }
+
     }
 }

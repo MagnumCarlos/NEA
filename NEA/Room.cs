@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.IO;
+using System.Runtime.CompilerServices;
 namespace NEA
 {
     public class Room : IRectangle
@@ -126,7 +127,7 @@ namespace NEA
             }
             return NewRoom;
         }
-        public void AssignRoomToCells(Cell[,] Cells)
+        private void AssignRoomToCells(Cell[,] Cells)
         {
             for(int i =0; i < Cells.GetLength(0); i++)
             {
@@ -136,7 +137,7 @@ namespace NEA
                 }
             }
         }
-        public void LoadProps(string FileName)
+        private void LoadProps(string FileName)
         {
             if (Program.CheckForFile(FileName))
             {
@@ -167,23 +168,40 @@ namespace NEA
                 }
             }
         }
-        public void DisplayRoom(Player player = null)
+        public void DisplayRoom(Player player, Ghost ghost = null, List<Cell> path = null)
         {
-            int RoomLength = Cells.GetLength(0);
-            int RoomHeight = Cells.GetLength(1);
-            int LocalX = player.GetGXCoord() - this.GetOriginX();
-            int LocalY = player.GetGYCoord() - this.GetOriginY();
-            for (int y = 0; y < RoomHeight; y++)
+            int LocalX = player.GetGXCoord() - this.OriginX;
+            int LocalY = player.GetGYCoord() - this.OriginY;
+            int GhostLocalX = 0;
+            int GhostLocalY = 0;
+            if(ghost!= null)
             {
-                for (int x = 0; x < RoomLength; x++)
+                GhostLocalX = ghost.GetGXCoord() - OriginX;
+                GhostLocalY = ghost.GetGYCoord() - OriginY;
+            }
+            for (int y = 0; y < Cells.GetLength(1); y++)
+            {
+                for (int x = 0; x < Cells.GetLength(0); x++)
                 {
                     if (player != null && x == LocalX && y == LocalY)
                     {
                         Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write("☺");
+                        Console.Write("P");
                         Console.ResetColor();
                     }
-                    else
+                    else if(ghost != null && x == GhostLocalX && y == GhostLocalY)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("G");
+                        Console.ResetColor();
+                    }
+                    else if (path != null && path.Any(c => c.GetXCoord() == x && c.GetYCoord() == y))
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write("*");
+                        Console.ResetColor();
+                    }
+                    else 
                     {
                         Console.Write(Cells[x, y].GetSymbol());
                     }
@@ -192,5 +210,6 @@ namespace NEA
                 Console.WriteLine();
             }
         }
+        
     }
 }

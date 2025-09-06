@@ -18,6 +18,10 @@
         {
             return Symbol;
         }
+        public void SetSymbol(char symbol)
+        {
+            this.Symbol = symbol;
+        }
         public int GetXCoord()
         {
             return XCoord;

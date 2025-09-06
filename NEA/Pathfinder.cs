@@ -66,7 +66,7 @@
             Console.WriteLine("ERROR NO PATH FOUND");
             return new List<Cell>();
         }
-        public Node GetLowestFCost(List<Node> OpenList)
+        private Node GetLowestFCost(List<Node> OpenList)
         {
             Node Lowest = OpenList[0];
             for(int i =1; i < OpenList.Count;i++)
@@ -78,7 +78,7 @@
             }
             return Lowest;
         }
-        public List<Cell> GetNeighbours(Node Current)
+        private List<Cell> GetNeighbours(Node Current)
         {
             List<Cell> Neighbours = new List<Cell>();
             Cell RefCell = Current.GetRefCell();
@@ -87,17 +87,22 @@
             Cell[,] Cells = RefCell.GetRoomRef().GetCells();
             int Width = Cells.GetLength(0);
             int Height = Cells.GetLength(1);
-            int[,] Directions = new int[,]
+            List<(int dx, int dy)> Directions = new List<(int, int)>
+    {
+        (0,-1), // up
+        (0,1),  // down
+        (-1,0), // left
+        (1,0)   // right
+    };
+
+            // shuffle
+            Random rng = new Random();
+            Directions = Directions.OrderBy(_ => rng.Next()).ToList();
+
+            foreach (var dir in Directions)
             {
-                    {0,-1},
-                    {0,1},
-                    {-1,0},
-                    {1,0 }
-            }; //up down left right in that order. currently biased to prefer vertical paths since up and down neighbours r explored first
-            for (int i = 0; i < 4; i++)
-            {
-                int nX = X + Directions[i, 0];
-                int nY = Y + Directions[i, 1];
+                int nX = X + dir.dx;
+                int nY = Y + dir.dy;
                 if (nX >= 0 && nX < Width && nY >= 0 && nY < Height)
                 {
                     Cell neighbour = Cells[nX, nY];
@@ -109,7 +114,7 @@
             }
             return Neighbours;
         }
-        public static int CalculateH(Node Current, Node End) //Manhattan distance method since my grid only allows for 4 directional movement
+        private static int CalculateH(Node Current, Node End) //Manhattan distance method since my grid only allows for 4 directional movement
         {
             int x1 = Current.GetRefCell().GetGXCoord();
             int x2 = End.GetRefCell().GetGXCoord();
@@ -118,7 +123,7 @@
             int Distance = Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
             return Distance;
         }
-        public List<Cell> ReconstructPath(Node EndNode)
+        private List<Cell> ReconstructPath(Node EndNode)
         {
             List<Cell> Path = new List<Cell>();
             Node Current = EndNode;
