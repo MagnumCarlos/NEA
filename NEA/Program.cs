@@ -50,6 +50,7 @@ namespace NEA
                     int GhostLocaLX = ghost.GetGXCoord() - CurrentRoom.GetOriginX();
                     int GhostLocaLY = ghost.GetGYCoord() - CurrentRoom.GetOriginY();
                     List<Cell> SP = pf.FindShortestPath(Cells[PlayerLocalX, PlayerLocalY], Cells[GhostLocaLX,GhostLocaLY]);
+                    player.Flashlight.Illuminate(player, CurrentRoom);
                     CurrentRoom.DisplayRoom(player, ghost,SP);
                 }
                 

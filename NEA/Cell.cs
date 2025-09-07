@@ -6,6 +6,7 @@
         int GXCoord, GYCoord; //global
         char Symbol;
         Room RoomRef;
+        bool IsLit;
         public Cell(int XCOORD, int YCOORD, char SYMBOL, int GLOBALX, int GLOBALY)
         {
             this.XCoord = XCOORD;
@@ -13,6 +14,22 @@
             this.Symbol = SYMBOL;
             this.GXCoord = GLOBALX;
             this.GYCoord = GLOBALY;
+            IsLit = false;
+        }
+        public void SetLightState(bool Lit)
+        {
+            if(Lit)
+            {
+                IsLit = true;
+            }
+            else if(!Lit)
+            {
+                IsLit = false;
+            }
+        }
+        public bool GetLightState()
+        {
+            return IsLit;
         }
         public char GetSymbol()
         {

@@ -114,6 +114,7 @@
             }
             return Neighbours;
         }
+
         private static int CalculateH(Node Current, Node End) //Manhattan distance method since my grid only allows for 4 directional movement
         {
             int x1 = Current.GetRefCell().GetGXCoord();

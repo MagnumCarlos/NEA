@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,11 +12,17 @@ namespace NEA
     {
         int GXCoord, GYCoord;
         List<Item> Inventory;
+        public Flashlight Flashlight;
         public Player(int GXCOORD, int GYCOORD,  List<Item> INVENTORY = null)
         {
             this.GXCoord = GXCOORD;
             this.GYCoord = GYCOORD;
             Inventory = INVENTORY ?? new List<Item>(); //the ?? means that if INVENTORY is null (by default it is) then make a new empty list
+            Flashlight = new Flashlight(1);
+        }
+        public Flashlight GetFlashLight()
+        {
+            return Flashlight;
         }
         public int GetGXCoord()
         {
@@ -106,8 +114,23 @@ namespace NEA
                     NewX += 1;
                     break;
             }
-
+            player.CheckEquipmentInput(KeyPressed);
             return (NewX, NewY);
+        }
+        private void CheckEquipmentInput(ConsoleKeyInfo KeyPressed)
+        {
+            switch(KeyPressed.Key)
+            {
+                case ConsoleKey.F:
+                    Flashlight.Toggle();
+                    break;
+                case ConsoleKey.E:
+                    Flashlight.Rotate(20);
+                    break;
+                case ConsoleKey.Q:
+                    Flashlight.Rotate(-20);
+                    break;
+            }
         }
     }
 }

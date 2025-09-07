@@ -19,6 +19,16 @@ namespace NEA
             this.GridX = GRIDX;
             this.GridY = GRIDY;
         }
+        public void ClearLighting()
+        {
+            for(int i =0; i < GetWidth();i++)
+            {
+                for(int j =0; j < GetHeight();j++)
+                {
+                    Cells[i, j].SetLightState(false);
+                }
+            }
+        }
         public void AddProp(Prop p)
         {
             PropsInRoom.Add(p);
@@ -183,6 +193,11 @@ namespace NEA
             {
                 for (int x = 0; x < Cells.GetLength(0); x++)
                 {
+                    if (Cells[x,y].GetLightState() == false)
+                    {
+                        Console.Write(".");
+                        continue;
+                    }
                     if (player != null && x == LocalX && y == LocalY)
                     {
                         Console.ForegroundColor = ConsoleColor.Cyan;
