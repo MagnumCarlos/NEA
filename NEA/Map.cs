@@ -1,27 +1,33 @@
-﻿
+
 namespace NEA
 {
     using System;
     public class Map
     {
         Room[] Rooms;
-        int RoomsPerRow, RoomsPerColumn;
-        Room[,] RoomGrid;
-        public Map(Room[] ROOMS, int ROOMSPERROW, int ROOMSPERCOLUMN)
+        int RoomsPerRow;
+        Cell[,] AllCells;
+        public Map(Room[] ROOMS, int ROOMSPERROW)
         {
             this.Rooms = ROOMS;
             this.RoomsPerRow = ROOMSPERROW;
-            this.RoomsPerColumn = ROOMSPERCOLUMN;
-            RoomGrid = new Room[ROOMSPERROW, ROOMSPERCOLUMN];
         }
-        public int getRoomsPerRow()
+        /*public Cell[,] AssignAllCells()
         {
-            return RoomsPerRow;
-        }
-        public int getRoomsPerColumn()
-        {
-            return RoomsPerColumn;
-        }
+            foreach(Room r in this.Rooms)
+            {
+                int StartX = r.GetOriginX();
+                int StartY = r.GetOriginY();    
+                for(int i = StartX; i < StartX + r.GetWidth();i++)
+                {
+                    for(int j =StartY; StartY + j < r.GetHeight();j++)
+                    {
+                        
+                    }
+                }
+               
+            }
+        }*/
         public static Map LoadMap(string FileName)
         {
             if(Program.CheckForFile(FileName))
@@ -30,7 +36,6 @@ namespace NEA
                 using (Reader)
                 {
                     int RoomsPerRow = Convert.ToInt32(Reader.ReadLine()); //in the global coordinate system, the rooms are laid out in a grid pattern
-                    int RoomsPerColumn = Convert.ToInt32(Reader.ReadLine());
                     int NumberOfRooms = Convert.ToInt32(Reader.ReadLine());
                     Room[] Rooms = new Room[NumberOfRooms];
                     Random rng = new Random();
@@ -60,13 +65,13 @@ namespace NEA
                             RunningTotalWidth += NewRoom.GetWidth();
                         }
                     }
-                    Map NewMap = new Map(Rooms, RoomsPerRow,RoomsPerColumn );
+                    Map NewMap = new Map(Rooms, RoomsPerRow);
                     return NewMap;
                 }
             }
             return null;
         }
-        public Room[] getRooms()
+        public Room[] GetRooms()
         {
             return Rooms;
         }
