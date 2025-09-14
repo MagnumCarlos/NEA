@@ -1,4 +1,4 @@
-﻿
+
 using System.Numerics;
 
 namespace NEA
@@ -33,7 +33,7 @@ namespace NEA
         {
             Player player = Player.SpawnPlayer(GameMap);
             Ghost ghost = null;
-            foreach(Room r in GameMap.getRooms())
+            foreach(Room r in GameMap.GetRooms())
             {
                 if(r.isGhostRoom())
                 {
@@ -42,27 +42,32 @@ namespace NEA
                 }
             }
             bool Playing = true;
-            Room CurrentRoom = GameMap.getRooms()[0];
-            Pathfinder pf = new Pathfinder();
+            Room CurrentRoom = GameMap.GetRooms()[0];
             while (Playing)
             {
                 CurrentRoom = Player.CheckForMovement(GameMap, CurrentRoom, player);
                 Cell[,] Cells = CurrentRoom.GetCells();
+<<<<<<< HEAD
                 if(ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX() + CurrentRoom.GetWidth())
+=======
+                if(ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX()+CurrentRoom.GetWidth())
+>>>>>>> 78bae7f91f5cb4eabcd96620156f8abbc130e5e3
                 {
-                    int PlayerLocalX = player.GetGXCoord() - CurrentRoom.GetOriginX();
-                    int PlayerLocalY = player.GetGYCoord() - CurrentRoom.GetOriginY();
-                    int GhostLocaLX = ghost.GetGXCoord() - CurrentRoom.GetOriginX();
-                    int GhostLocaLY = ghost.GetGYCoord() - CurrentRoom.GetOriginY();
-                    List<Cell> SP = pf.FindShortestPath(Cells[PlayerLocalX, PlayerLocalY], Cells[GhostLocaLX,GhostLocaLY]);
+                    List<Cell> pf = Pathfinder.FindShortestPath(Cells[player.GetGXCoord() - CurrentRoom.GetOriginX(), player.GetGYCoord() - CurrentRoom.GetOriginY()], Cells[ghost.GetGXCoord() - CurrentRoom.GetOriginX(), ghost.GetGYCoord() - CurrentRoom.GetOriginY()]);
                     player.Flashlight.Illuminate(player, CurrentRoom);
-                    CurrentRoom.DisplayRoom(player, ghost,SP);
+                    CurrentRoom.DisplayRoom(player, ghost, pf);
                 }
                 else
                 {
                     player.Flashlight.Illuminate(player, CurrentRoom);
+<<<<<<< HEAD
                     CurrentRoom.DisplayRoom(player);
                 }
+=======
+                    CurrentRoom.DisplayRoom(player, ghost);
+                }
+                CurrentRoom.ClearLighting();
+>>>>>>> 78bae7f91f5cb4eabcd96620156f8abbc130e5e3
             }
         }
 
