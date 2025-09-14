@@ -6,28 +6,15 @@ namespace NEA
     {
         Room[] Rooms;
         int RoomsPerRow;
-        Cell[,] AllCells;
         public Map(Room[] ROOMS, int ROOMSPERROW)
         {
             this.Rooms = ROOMS;
             this.RoomsPerRow = ROOMSPERROW;
         }
-        /*public Cell[,] AssignAllCells()
+        public int getRoomsPerRow()
         {
-            foreach(Room r in this.Rooms)
-            {
-                int StartX = r.GetOriginX();
-                int StartY = r.GetOriginY();    
-                for(int i = StartX; i < StartX + r.GetWidth();i++)
-                {
-                    for(int j =StartY; StartY + j < r.GetHeight();j++)
-                    {
-                        
-                    }
-                }
-               
-            }
-        }*/
+            return RoomsPerRow;
+        }
         public static Map LoadMap(string FileName)
         {
             if(Program.CheckForFile(FileName))
@@ -71,7 +58,7 @@ namespace NEA
             }
             return null;
         }
-        public Room[] GetRooms()
+        public Room[] getRooms()
         {
             return Rooms;
         }
