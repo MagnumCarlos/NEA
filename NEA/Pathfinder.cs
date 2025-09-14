@@ -6,12 +6,12 @@
         {
             List<Node> OpenList = new List<Node>();
             List<Node> ClosedList = new List<Node>();
-            Dictionary<Cell, Node> AllNodes = new Dictionary<Cell, Node>();
+            Dictionary<Cell, Node> AllNodes = new Dictionary<Cell, Node>(); 
             Node Start = new Node(StartCell, 0);
             Node End = new Node(EndCell, 0);
-            Start.SetHCost(CalculateH(Start, End));
+            Start.SetHCost(CalculateH(Start, End)); //Estimated cost to the end
             OpenList.Add(Start);
-            AllNodes[StartCell] = Start;
+            AllNodes[StartCell] = Start; 
             while (OpenList.Count!=0)
             {
                 Node Current = GetLowestFCost(OpenList); //if F costs are equal, this will prefer lower H costs
@@ -66,6 +66,7 @@
             Console.WriteLine("ERROR NO PATH FOUND");
             return new List<Cell>();
         }
+     
         private Node GetLowestFCost(List<Node> OpenList)
         {
             Node Lowest = OpenList[0];
@@ -186,5 +187,21 @@
         {
             this.Parent = New;
         }
+    }
+    class RoomGraphNode
+    {
+        Room InRoom;
+        Cell RefCell;
+        public RoomGraphNode(Room INROOM, Cell REFCELL)
+        {
+            InRoom = INROOM;
+            RefCell = REFCELL;
+        }
+    }
+    class RoomGraphEdge
+    {
+        int Weight;
+        RoomGraphEdge Towards;
+        //...
     }
 }

@@ -17,8 +17,9 @@ namespace NEA
     public class Flashlight : Equipment
     {
         double FacingAngle;
-        int ConeAngle = 60;
-        int Range = 4;
+        int ConeAngle = 30;
+        int Range = 10;
+        int AoERange = 2;
         bool IsOn = false;
         public Flashlight (int LEVEL) : base("Flashlight", LEVEL)
         {
@@ -33,6 +34,7 @@ namespace NEA
         }
         public void Illuminate(Player player, Room room)
         {
+            room.ClearLighting();
             int PlayerX = player.GetGXCoord() - room.GetOriginX();
             int PlayerY = player.GetGYCoord() - room.GetOriginY();
             if(IsOn)
@@ -59,16 +61,24 @@ namespace NEA
             {
                 return false;
             }
+            if(Distance <= AoERange)
+            {
+                return true;
+            }
             double DirX = Math.Cos(FacingAngle * Math.PI / 180);
-            double DirY = Math.Sin(FacingAngle * Math.PI / 180);
+            double DirY = Math.Sin(FacingAngle * Math.PI / 180); //unit vector representing where flashlight is facing
+            //A unit vector is a vector of magnitude 1, so Cos(FacingAngle) = Adjacent / 1 = Adjacent = X Component and similar for Sin
 
-            double Dot = (VectorX * DirX) + (VectorY * DirY);
-            double MagA = Math.Sqrt((VectorX * VectorX) + (VectorY * VectorY));
+            double Dot = (VectorX * DirX) + (VectorY * DirY); //The dot product between player -> cell vector and facing direction
+
+            double MagA = Math.Sqrt((VectorX * VectorX) + (VectorY * VectorY)); //Magnitude of A, same as distance but CosTheta below makes a lot more sense with this
             double MagB = Math.Sqrt((DirX * DirX) + (DirY * DirY));
-            double CosTheta = Dot / (MagA * MagB);
+
+            double CosTheta = Dot / (MagA * MagB); //dot product formula
+
             CosTheta = Math.Max(-1.0, Math.Min(1.0, CosTheta)); //range of the cosine function (included to be safe)
-            double Angle = Math.Acos(CosTheta);
-            return Angle < ConeAngle / 2;
+            double Angle = Math.Acos(CosTheta) * 180 / Math.PI; //convert back to degrees
+            return Angle < ConeAngle / 2; //if the angle the cell is at from the facing direction is less than half of the cone's spread, it's illuminated
 
         }
     }

@@ -12,11 +12,16 @@ namespace NEA
             int OptionChosen = new Menu("Ghost Hunter", new[]{ "Play", "Exit" }).Show();
             if (OptionChosen == 0)
             {
-                int MapChosen = new Menu("Choose a Map", new[] { "Map1", "Map2" }).Show();
+                int MapChosen = new Menu("Choose a Map", new[] { "Map1", "Small Bungalow" }).Show();
                 if (MapChosen == 0)
                 {
                     Map Map1 = Map.LoadMap("Map1.txt");
                     PlayGame(Map1);
+                }
+                else if(MapChosen ==1)
+                {
+                    Map Map2 = Map.LoadMap("Bungalow.txt");
+                    PlayGame(Map2);
                 }
             }
             else if (OptionChosen == 1)
@@ -43,7 +48,7 @@ namespace NEA
             {
                 CurrentRoom = Player.CheckForMovement(GameMap, CurrentRoom, player);
                 Cell[,] Cells = CurrentRoom.GetCells();
-                if(ghost.GetGXCoord() < CurrentRoom.GetOriginX() + CurrentRoom.GetWidth())
+                if(ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX() + CurrentRoom.GetWidth())
                 {
                     int PlayerLocalX = player.GetGXCoord() - CurrentRoom.GetOriginX();
                     int PlayerLocalY = player.GetGYCoord() - CurrentRoom.GetOriginY();
@@ -53,7 +58,11 @@ namespace NEA
                     player.Flashlight.Illuminate(player, CurrentRoom);
                     CurrentRoom.DisplayRoom(player, ghost,SP);
                 }
-                
+                else
+                {
+                    player.Flashlight.Illuminate(player, CurrentRoom);
+                    CurrentRoom.DisplayRoom(player);
+                }
             }
         }
 

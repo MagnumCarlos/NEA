@@ -82,7 +82,7 @@ namespace NEA
                 {
                     if (Line[x].Equals('■'))
                     {
-                        (int TargetX, int TargetY) = DoorCell.LoadTarget("Doors.txt", StartPos); //StartPos indicates where in doors.txt to read
+                        (int TargetX, int TargetY) = DoorCell.LoadTarget("Bungalow_Doors.txt", StartPos); //StartPos indicates where in doors.txt to read
                         DoorCell doorCell = new DoorCell(x, y, Line[x], x + OriginX, y + OriginY, TargetX, TargetY);
                         Cells[x, y] = doorCell;
                         StartPos += 2;
@@ -97,7 +97,7 @@ namespace NEA
             int GridY = RoomNumber / RoomsPerRow;
             Room NewRoom = new Room(RoomNumber, Cells, OriginX, OriginY, GridX, GridY);
             NewRoom.LoadProps("Props.txt");
-            foreach(Prop P in NewRoom.GetProps())
+            /*foreach(Prop P in NewRoom.GetProps())
             {
                 if(P is RectangularProp Rect)
                 {
@@ -133,8 +133,8 @@ namespace NEA
                         }
                     }
                 }
-                NewRoom.AssignRoomToCells(Cells);
-            }
+            }*/
+            NewRoom.AssignRoomToCells(Cells);
             return NewRoom;
         }
         private void AssignRoomToCells(Cell[,] Cells)
@@ -193,16 +193,16 @@ namespace NEA
             {
                 for (int x = 0; x < Cells.GetLength(0); x++)
                 {
-                    if (Cells[x,y].GetLightState() == false)
-                    {
-                        Console.Write(".");
-                        continue;
-                    }
                     if (player != null && x == LocalX && y == LocalY)
                     {
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.Write("P");
                         Console.ResetColor();
+                    }
+                    if (Cells[x, y].GetLightState() == false)
+                    {
+                        Console.Write(".");
+                        continue;
                     }
                     else if(ghost != null && x == GhostLocalX && y == GhostLocalY)
                     {
