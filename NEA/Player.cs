@@ -39,7 +39,7 @@ namespace NEA
         }
         public static Player SpawnPlayer(Map GameMap)
         {
-            Room CurrentRoom = GameMap.getRooms()[0];
+            Room CurrentRoom = GameMap.GetRooms()[0];
             int SpawnX = CurrentRoom.GetWidth() / 2;
             int SpawnY = CurrentRoom.GetHeight() / 2;
             if (CurrentRoom.GetCells()[SpawnX, SpawnY].IsWalkable())
@@ -62,8 +62,8 @@ namespace NEA
 
                 if (nextCell is DoorCell door)
                 {
-                    int TargetX = door.getTargetX();
-                    int TargetY = door.getTargetY();
+                    int TargetX = door.GetTargetX();
+                    int TargetY = door.GetTargetY();
                     Room TargetRoom = door.FindTargetRoom(GameMap, CurrentRoom.GetRoomNumber());
                     player.SetPosition(TargetX, TargetY);
                     return TargetRoom;

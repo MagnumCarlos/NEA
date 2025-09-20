@@ -2,7 +2,7 @@
 {
     class Pathfinder
     {
-        public List<Cell> FindShortestPath(Cell StartCell, Cell EndCell)
+        public static List<Cell> FindShortestPath(Cell StartCell, Cell EndCell)
         {
             List<Node> OpenList = new List<Node>();
             List<Node> ClosedList = new List<Node>();
@@ -67,7 +67,7 @@
             return new List<Cell>();
         }
      
-        private Node GetLowestFCost(List<Node> OpenList)
+        private static Node GetLowestFCost(List<Node> OpenList)
         {
             Node Lowest = OpenList[0];
             for(int i =1; i < OpenList.Count;i++)
@@ -79,7 +79,7 @@
             }
             return Lowest;
         }
-        private List<Cell> GetNeighbours(Node Current)
+        private static List<Cell> GetNeighbours(Node Current)
         {
             List<Cell> Neighbours = new List<Cell>();
             Cell RefCell = Current.GetRefCell();
@@ -125,7 +125,7 @@
             int Distance = Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
             return Distance;
         }
-        private List<Cell> ReconstructPath(Node EndNode)
+        private static List<Cell> ReconstructPath(Node EndNode)
         {
             List<Cell> Path = new List<Cell>();
             Node Current = EndNode;
@@ -188,20 +188,78 @@
             this.Parent = New;
         }
     }
-    class RoomGraphNode
+    class RoomGraph
     {
-        Room InRoom;
-        Cell RefCell;
-        public RoomGraphNode(Room INROOM, Cell REFCELL)
+        RoomGraphEdge[,] AdjacencyMatrix; //Dense graph; there are much more doors (edges) than rooms (vertices)
+        public RoomGraph(int NumberOfRooms)
         {
-            InRoom = INROOM;
-            RefCell = REFCELL;
+            AdjacencyMatrix = new RoomGraphEdge[NumberOfRooms,NumberOfRooms];
+        }   
+        public void PopulateMatrix(Map GameMap)
+        {
+            List<DoorCell> AllDoors = GameMap.GetAllDoors();
+            foreach(DoorCell EntryDoorA in AllDoors)
+            {
+                Room RoomA = EntryDoorA.GetRoomRef();
+                int i = RoomA.GetRoomNumber();
+                Room RoomB = EntryDoorA.FindTargetRoom(GameMap,RoomA.GetRoomNumber());
+                int j = RoomB.GetRoomNumber();
+                DoorCell EntryDoorB = (DoorCell) RoomB.GetCells()[EntryDoorA.GetTargetX() - RoomB.GetOriginX(), EntryDoorA.GetTargetY() - RoomB.GetOriginY()];
+                AdjacencyMatrix[i, j] = new RoomGraphEdge(EntryDoorA, EntryDoorB, 1);/*Each edge represents a door connection, and the cost is the same for each edge
+                Therefore the pathfinding will prefer paths with the least number of doors which is accurate enough, since a) there aren't hundreds of Rooms unlike Cells 
+                b) most rooms are square shaped so it's representative*/
+                AdjacencyMatrix[j,i] = new RoomGraphEdge(EntryDoorB,EntryDoorA,1);    
+                //Every door is bidirectional which is why both [i,j] and [j,i] are populated for one Door
+            }
+        }
+        public List<Room> FindRoomPath(Room StartRoom, Room EndRoom, Room[] AllRooms) //Breadth First Search, since all edges are of the same weight in the graph
+        {
+            int StartIndex = StartRoom.GetRoomNumber(); //Same as Array.IndexOf - i added a new RoomNumber property to each room
+            int EndIndex = EndRoom.GetRoomNumber(); 
+            Queue<int> queue = new Queue<int>();
+            bool[] Visited = new bool[AllRooms.Length];
+            int[] Parent = new int[AllRooms.Length];
+            for(int i =0; i < Parent.Length; i++)
+            {
+                Parent[i] = -1;
+            } //By default every element is 0, but 0 is actually a valid RoomNumber so I use -1 to represent "no parent"
+            Visited[StartIndex] = true;
+            queue.Enqueue(StartIndex);
+            while(queue.Count !=0)
+            {
+                int Current =queue.Dequeue();
+                if(Current == EndIndex)
+                {
+                    break;
+                }
+                for(int i =0; i < AllRooms.Length;i++)
+                {
+                    if (AdjacencyMatrix[Current,i] !=null && !Visited[i])
+                    {
+                        Visited[i] = true;
+                        Parent[i] = Current;
+                        queue.Enqueue(i);
+                    }
+                }
+            }
+            List<Room> Path = new List<Room>();
+            for(int i = EndIndex; i != -1; i = Parent[i])
+            {
+                Path.Add(AllRooms[i]);
+            }
+            Path.Reverse();
+            return Path;
         }
     }
     class RoomGraphEdge
     {
-        int Weight;
-        RoomGraphEdge Towards;
-        //...
+        DoorCell EntryDoor, ExitDoor;
+        int Cost;
+        public RoomGraphEdge(DoorCell ENTRYDOOR, DoorCell EXITDOOR, int COST)
+        {
+            EntryDoor = ENTRYDOOR;
+            ExitDoor = EXITDOOR;
+            Cost = COST;
+        }   
     }
 }

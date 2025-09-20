@@ -28,9 +28,13 @@
                 Random rng = new Random();
                 int Random = rng.Next(Lines.Length);
                 string line = Lines[Random];
-                string[] Parts = line.Split();
+                string[] Parts = line.Split(" ");
                 string GhostType = Parts[0];
-                List<Evidence> Evidences = Evidence.SelectEvidences(new List<string> { Parts[1], Parts[2] });
+                List<Evidence> Evidences = Evidence.SelectEvidences(Parts.Skip(1).ToList()); //Skips the first element in Parts and then passes the rest to SelectEvidences
+                foreach(Evidence e in Evidences)
+                {
+                    e.Spawn(GhostRoom);
+                }
                 (int SpawnX, int SpawnY) = SpawnGhost(GhostRoom);
                 return new Ghost(SpawnX, SpawnY, GhostType, Evidences);
             }

@@ -6,6 +6,7 @@
         int GXCoord, GYCoord; //global
         char Symbol;
         Room RoomRef;
+        Evidence? EvidenceRef;
         bool IsLit;
         public Cell(int XCOORD, int YCOORD, char SYMBOL, int GLOBALX, int GLOBALY)
         {
@@ -15,6 +16,14 @@
             this.GXCoord = GLOBALX;
             this.GYCoord = GLOBALY;
             IsLit = false;
+        }
+        public void SetEvidenceRef(Evidence e)
+        {
+            EvidenceRef = e;
+        }
+        public Evidence? GetEvidenceRef()
+        {
+            return EvidenceRef;
         }
         public void SetLightState(bool Lit)
         {
@@ -68,19 +77,19 @@
             return char.IsWhiteSpace(Symbol) || Symbol == '■';
         }
     }
-    class DoorCell : Cell
+    public class DoorCell : Cell
     {
-        public int TargetGlobalX, TargetGlobalY;
+        int TargetGlobalX, TargetGlobalY;
         public DoorCell(int LOCALX, int LOCALY, char SYMBOL, int GLOBALX, int GLOBALY, int TARGETGLOBALX, int TARGETGLOBALY) : base(LOCALX, LOCALY, SYMBOL, GLOBALX, GLOBALY)
         {
             this.TargetGlobalX = TARGETGLOBALX;
             this.TargetGlobalY = TARGETGLOBALY;
         }
-        public int getTargetX()
+        public int GetTargetX()
         {
             return this.TargetGlobalX;
         }
-        public int getTargetY()
+        public int GetTargetY()
         {
             return this.TargetGlobalY;
         }
@@ -109,7 +118,7 @@
         }
         public Room FindTargetRoom(Map GameMap, int CurrentRoomNo)
         {
-            Room[] Rooms = GameMap.getRooms();
+            Room[] Rooms = GameMap.GetRooms();
             int NoOfRooms = Rooms.Count();
             for (int i = 0; i < NoOfRooms; i++)
             {

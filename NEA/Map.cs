@@ -6,14 +6,11 @@ namespace NEA
     {
         Room[] Rooms;
         int RoomsPerRow;
+        List<DoorCell> AllDoors;
         public Map(Room[] ROOMS, int ROOMSPERROW)
         {
             this.Rooms = ROOMS;
             this.RoomsPerRow = ROOMSPERROW;
-        }
-        public int getRoomsPerRow()
-        {
-            return RoomsPerRow;
         }
         public static Map LoadMap(string FileName)
         {
@@ -30,10 +27,15 @@ namespace NEA
                     int RunningTotalWidth = 0;
                     int RunningTotalHeight = 0; //these will be used to assign the origins of each room
                     int StartPos = 0; //for loading doors
-                    List<int> Heights = new List<int>();    
+                    List<int> Heights = new List<int>();
+                    List<DoorCell> AllDoors = new List<DoorCell>();
                     for (int i = 0; i < NumberOfRooms; i++)
                     {
                         Room NewRoom = Room.LoadRoom(Reader, i, RunningTotalWidth, RunningTotalHeight, RoomsPerRow, ref StartPos);
+                        foreach(DoorCell door in NewRoom.GetDoors())
+                        {
+                            AllDoors.Add(door);
+                        }
                         if(i == GhostRoomNo)
                         {
                             NewRoom.SetGhostRoom();
@@ -53,15 +55,19 @@ namespace NEA
                         }
                     }
                     Map NewMap = new Map(Rooms, RoomsPerRow);
+                    NewMap.AllDoors = AllDoors;
                     return NewMap;
                 }
             }
             return null;
         }
-        public Room[] getRooms()
+        public Room[] GetRooms()
         {
             return Rooms;
         }
-
+        public List<DoorCell> GetAllDoors()
+        {
+            return AllDoors;
+        }
     }
 }

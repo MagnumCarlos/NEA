@@ -26,13 +26,11 @@ namespace NEA
         string Name;
         public SpawnPattern SpawnType;
         public DetectionMethod DetectionType;
-        public List<(int, int)> DetectionCoords;
         public Evidence(string NAME, SpawnPattern SPAWNTYPE, DetectionMethod DETECTIONTYPE)
         {
             Name = NAME;
             SpawnType = SPAWNTYPE;
             DetectionType = DETECTIONTYPE;
-            DetectionCoords = new List<(int,int)>();
         }
         public string GetName()
         {
@@ -47,11 +45,11 @@ namespace NEA
                     
                     break;
                 case SpawnPattern.MultiPoint:
-                    if(Name == "Ghost Orbs")
+                    if(Name == "ORBS")
                     {
-                        Coords = MultiPointSpawn(room, 5);
+                        Coords = MultiPointSpawn(room, 100);
                     }
-                    else if(Name == "Fingerprints")
+                    else if(Name == "FINGERPRINTS")
                     {
                         Coords = MultiPointSpawn(room.GetProps(),5);    
                     }
@@ -63,16 +61,22 @@ namespace NEA
                     
                     break;*/
             }
+            for(int i =0; i < Coords.Count;i++)
+            {
+                int x = Coords[i].Item1;
+                int y = Coords[i].Item2;
+                room.GetCells()[x, y].SetEvidenceRef(this);
+            }
         }
         private static List<Evidence> GetEvidences()
         {
             return new List<Evidence>
             {
-                new Evidence("EMF Level 5", SpawnPattern.Dynamic, DetectionMethod.Instrumental),
-                new Evidence("Ghost Orbs", SpawnPattern.MultiPoint, DetectionMethod.Instrumental),
-                new Evidence("Freezing Temps", SpawnPattern.Area, DetectionMethod.Direct),
-                new Evidence("Spirit Box", SpawnPattern.Dynamic, DetectionMethod.Instrumental),
-                new Evidence("Fingerprints", SpawnPattern.MultiPoint, DetectionMethod.Direct),
+                new Evidence("EMF5", SpawnPattern.Dynamic, DetectionMethod.Instrumental),
+                new Evidence("ORBS", SpawnPattern.MultiPoint, DetectionMethod.Instrumental),
+                new Evidence("FREEZINGTEMPS", SpawnPattern.Area, DetectionMethod.Direct),
+                new Evidence("SPIRITBOX", SpawnPattern.Dynamic, DetectionMethod.Instrumental),
+                new Evidence("FINGERPRINTS", SpawnPattern.MultiPoint, DetectionMethod.Direct),
                 //new Evidence("Ghost Writing", SpawnPattern.Point, DetectionMethod.Direct),
                 //new Evidence("Motion Sensor", SpawnPattern.Point, DetectionMethod.Instrumental)
             };

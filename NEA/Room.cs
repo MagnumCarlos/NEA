@@ -8,16 +8,14 @@ namespace NEA
         bool IsGhostRoom;
         int RoomNumber;
         int OriginX, OriginY;
-        int GridX, GridY; //position of room in the global grid, used for pathfinding later on
         List<Prop> PropsInRoom = new List<Prop>();
-        public Room(int ROOMNUMBER, Cell[,] CELLS, int ORIGINX, int ORIGINY, int GRIDX, int GRIDY)
+        List<DoorCell> AllDoors = new List<DoorCell>(); 
+        public Room(int ROOMNUMBER, Cell[,] CELLS, int ORIGINX, int ORIGINY)
         {
             this.RoomNumber = ROOMNUMBER;
             this.Cells = CELLS;
             this.OriginX = ORIGINX;
             this.OriginY = ORIGINY;
-            this.GridX = GRIDX;
-            this.GridY = GRIDY;
         }
         public void ClearLighting()
         {
@@ -28,6 +26,10 @@ namespace NEA
                     Cells[i, j].SetLightState(false);
                 }
             }
+        }
+        public List<DoorCell> GetDoors()
+        {
+            return AllDoors;
         }
         public void AddProp(Prop p)
         {
@@ -73,6 +75,7 @@ namespace NEA
         {
             int MaxWidth = Convert.ToInt32(Reader.ReadLine());
             int RoomHeight = Convert.ToInt32(Reader.ReadLine());
+            List<DoorCell> AllDoors = new List<DoorCell>();
             Cell[,] Cells = new Cell[MaxWidth, RoomHeight];
             for (int y = 0; y < RoomHeight; y++)
             {
@@ -82,8 +85,9 @@ namespace NEA
                 {
                     if (Line[x].Equals('■'))
                     {
-                        (int TargetX, int TargetY) = DoorCell.LoadTarget("Bungalow_Doors.txt", StartPos); //StartPos indicates where in doors.txt to read
+                        (int TargetX, int TargetY) = DoorCell.LoadTarget("Doors.txt", StartPos); //StartPos indicates where in doors.txt to read
                         DoorCell doorCell = new DoorCell(x, y, Line[x], x + OriginX, y + OriginY, TargetX, TargetY);
+                        AllDoors.Add(doorCell);
                         Cells[x, y] = doorCell;
                         StartPos += 2;
                     }
@@ -93,11 +97,10 @@ namespace NEA
                     }
                 }
             }
-            int GridX = RoomNumber % RoomsPerRow;
-            int GridY = RoomNumber / RoomsPerRow;
-            Room NewRoom = new Room(RoomNumber, Cells, OriginX, OriginY, GridX, GridY);
+            Room NewRoom = new Room(RoomNumber, Cells, OriginX, OriginY);
+            NewRoom.AllDoors = AllDoors;
             NewRoom.LoadProps("Props.txt");
-            /*foreach(Prop P in NewRoom.GetProps())
+            foreach(Prop P in NewRoom.GetProps())
             {
                 if(P is RectangularProp Rect)
                 {
@@ -133,7 +136,7 @@ namespace NEA
                         }
                     }
                 }
-            }*/
+            }
             NewRoom.AssignRoomToCells(Cells);
             return NewRoom;
         }
@@ -204,13 +207,18 @@ namespace NEA
                         Console.Write(".");
                         continue;
                     }
+                    if (Cells[x,y].GetEvidenceRef() != null)
+                    {
+                        Console.Write("E");
+                        continue;
+                    }
                     else if(ghost != null && x == GhostLocalX && y == GhostLocalY)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write("G");
                         Console.ResetColor();
                     }
-                    else if (path != null && path.Any(c => c.GetXCoord() == x && c.GetYCoord() == y))
+                    else if (path != null && path.Any(c => c.GetXCoord() == x && c.GetYCoord() == y)) //For each Cell c in path, checks if its X/Y coordinate = the current x/y 
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.Write("*");

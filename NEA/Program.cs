@@ -18,11 +18,6 @@ namespace NEA
                     Map Map1 = Map.LoadMap("Map1.txt");
                     PlayGame(Map1);
                 }
-                else if(MapChosen ==1)
-                {
-                    Map Map2 = Map.LoadMap("Bungalow.txt");
-                    PlayGame(Map2);
-                }
             }
             else if (OptionChosen == 1)
             {
@@ -47,27 +42,18 @@ namespace NEA
             {
                 CurrentRoom = Player.CheckForMovement(GameMap, CurrentRoom, player);
                 Cell[,] Cells = CurrentRoom.GetCells();
-<<<<<<< HEAD
-                if(ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX() + CurrentRoom.GetWidth())
-=======
-                if(ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX()+CurrentRoom.GetWidth())
->>>>>>> 78bae7f91f5cb4eabcd96620156f8abbc130e5e3
+                player.Flashlight.Illuminate(player, CurrentRoom);
+                if (ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX()+CurrentRoom.GetWidth())
                 {
                     List<Cell> pf = Pathfinder.FindShortestPath(Cells[player.GetGXCoord() - CurrentRoom.GetOriginX(), player.GetGYCoord() - CurrentRoom.GetOriginY()], Cells[ghost.GetGXCoord() - CurrentRoom.GetOriginX(), ghost.GetGYCoord() - CurrentRoom.GetOriginY()]);
-                    player.Flashlight.Illuminate(player, CurrentRoom);
                     CurrentRoom.DisplayRoom(player, ghost, pf);
                 }
                 else
                 {
-                    player.Flashlight.Illuminate(player, CurrentRoom);
-<<<<<<< HEAD
                     CurrentRoom.DisplayRoom(player);
-                }
-=======
-                    CurrentRoom.DisplayRoom(player, ghost);
-                }
+                }             
                 CurrentRoom.ClearLighting();
->>>>>>> 78bae7f91f5cb4eabcd96620156f8abbc130e5e3
+
             }
         }
 
