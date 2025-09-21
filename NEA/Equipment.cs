@@ -18,8 +18,8 @@ namespace NEA
     {
         double FacingAngle;
         int ConeAngle = 30;
-        int Range = 10;
-        int AoERange = 2;
+        int Range = 16;
+        int AoERange = 1;
         bool IsOn = false;
         public Flashlight (int LEVEL) : base("Flashlight", LEVEL)
         {

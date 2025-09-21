@@ -42,16 +42,14 @@ namespace NEA
                         }
                         Rooms[i] = NewRoom;
                         Heights.Add(NewRoom.GetHeight());
-                        if (i % RoomsPerRow ==0 && i >0) 
+                        RunningTotalWidth += NewRoom.GetWidth();
+                        if ((i+1) % RoomsPerRow ==0 && i >0) //Goes to a new row after all the rooms on that row have been loaded
+                        //i+1 is used because for example for 2 RoomsPerRow it should go to a new row after 2 rooms have been loaded, but just i would make it go after 3 rooms (zero indexing)
                         {
                             RunningTotalWidth = 0; 
                             int HighestRoom = Heights.Max();
                             RunningTotalHeight += HighestRoom;
                             Heights.Clear();
-                        }
-                        else
-                        {
-                            RunningTotalWidth += NewRoom.GetWidth();
                         }
                     }
                     Map NewMap = new Map(Rooms, RoomsPerRow);

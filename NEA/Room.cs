@@ -85,7 +85,7 @@ namespace NEA
                 {
                     if (Line[x].Equals('■'))
                     {
-                        (int TargetX, int TargetY) = DoorCell.LoadTarget("Doors.txt", StartPos); //StartPos indicates where in doors.txt to read
+                        (int TargetX, int TargetY) = DoorCell.LoadTarget("Bungalow_Doors.txt", StartPos); //StartPos indicates where in doors.txt to read
                         DoorCell doorCell = new DoorCell(x, y, Line[x], x + OriginX, y + OriginY, TargetX, TargetY);
                         AllDoors.Add(doorCell);
                         Cells[x, y] = doorCell;
@@ -99,7 +99,7 @@ namespace NEA
             }
             Room NewRoom = new Room(RoomNumber, Cells, OriginX, OriginY);
             NewRoom.AllDoors = AllDoors;
-            NewRoom.LoadProps("Props.txt");
+            //NewRoom.LoadProps("Props.txt");
             foreach(Prop P in NewRoom.GetProps())
             {
                 if(P is RectangularProp Rect)

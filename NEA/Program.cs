@@ -18,6 +18,11 @@ namespace NEA
                     Map Map1 = Map.LoadMap("Map1.txt");
                     PlayGame(Map1);
                 }
+                else if(MapChosen ==1)
+                {
+                    Map Map2 = Map.LoadMap("Bungalow.txt");
+                    PlayGame(Map2);
+                }
             }
             else if (OptionChosen == 1)
             {
@@ -36,14 +41,17 @@ namespace NEA
                     break;
                 }
             }
+            RoomGraph Graph = new RoomGraph(GameMap.GetRooms().Length);
             bool Playing = true;
             Room CurrentRoom = GameMap.GetRooms()[0];
+            List<Room> Path = Graph.FindRoomPath(CurrentRoom, CurrentRoom, GameMap.GetRooms());
+            int test = Path.Count;
             while (Playing)
             {
                 CurrentRoom = Player.CheckForMovement(GameMap, CurrentRoom, player);
                 Cell[,] Cells = CurrentRoom.GetCells();
                 player.Flashlight.Illuminate(player, CurrentRoom);
-                if (ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX()+CurrentRoom.GetWidth())
+                if (ghost.GetGXCoord() > CurrentRoom.GetOriginX() && ghost.GetGXCoord() < CurrentRoom.GetOriginX()+CurrentRoom.GetWidth() && ghost.GetGYCoord() > CurrentRoom.GetOriginY() && ghost.GetGYCoord() < CurrentRoom.GetOriginY() + CurrentRoom.GetHeight())
                 {
                     List<Cell> pf = Pathfinder.FindShortestPath(Cells[player.GetGXCoord() - CurrentRoom.GetOriginX(), player.GetGYCoord() - CurrentRoom.GetOriginY()], Cells[ghost.GetGXCoord() - CurrentRoom.GetOriginX(), ghost.GetGYCoord() - CurrentRoom.GetOriginY()]);
                     CurrentRoom.DisplayRoom(player, ghost, pf);

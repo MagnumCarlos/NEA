@@ -188,7 +188,7 @@
             this.Parent = New;
         }
     }
-    class RoomGraph
+    public class RoomGraph
     {
         RoomGraphEdge[,] AdjacencyMatrix; //Dense graph; there are much more doors (edges) than rooms (vertices)
         public RoomGraph(int NumberOfRooms)
